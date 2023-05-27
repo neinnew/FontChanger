@@ -1,0 +1,84 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- .NET Framework 3.5 used for Cities: Skylines modding -->
+        <TargetFramework>net35</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+
+        <!-- Version -->
+        <Version>1.0.0</Version>
+        <AssemblyVersion>$(Version).*</AssemblyVersion>
+        <FileVersion>$(Version)</FileVersion>
+        <Deterministic>false</Deterministic>
+
+        <ManagedDLLPath>$(MSBuildProgramFiles32)/Steam/steamapps/common/Cities_Skylines/Cities_Data/Managed</ManagedDLLPath>
+        <AssemblySearchPaths>
+            $(AssemblySearchPaths);
+            $(ManagedDLLPath)
+        </AssemblySearchPaths>
+        <Configurations>Debug;Release;Workshop</Configurations>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PublishedFileID><!-- Workshop ID here --></PublishedFileID>
+        <WorkshopDir Condition="Exists ('$(PublishedFileID)')">$(MSBuildProgramFiles32)/Steam/steamapps/workshop/content/255710/$(PublishedFileID)/</WorkshopDir>
+    </PropertyGroup>
+
+    <!-- Implicit global using directives -->
+    <ItemGroup>
+        <Using Include="System" />
+        <Using Include="System.Collections.Generic" />
+        <Using Include="System.IO" />
+        <Using Include="System.Linq" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Assembly-CSharp" />
+        <Reference Include="ColossalManaged" />
+        <Reference Include="ICities" />
+        <Reference Include="UnityEngine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <_TranslationSource Include="Translation\Source\**\*.tsv" />
+        <EmbeddedResource Include="@(_TranslationSource)" Condition="Exists ('@(_TranslationSource)')" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Sprites\*.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ContentWithTargetPath Include="$(SolutionDir)/Translations/**/*.*" TargetPath="Translations/%(RecursiveDir)/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+        <ContentWithTargetPath Include="$(SolutionDir)/nnCitiesShared/Translations/**/*.*" TargetPath="Translations/%(RecursiveDir)/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+
+    <Target Name="DeployToLocal" AfterTargets="Build">
+        <Message Importance="high" Text="Copy to Local Directory" />
+        <PropertyGroup>
+            <LocalDir>$(LocalAppData)/Colossal Order/Cities_Skylines/Addons/Mods/$(SolutionName)/</LocalDir>
+        </PropertyGroup>
+        <ItemGroup>
+            <OriginalWorkshop Include="$(WorkshopDir)**/*.*" Condition="Exists ('$(WorkshopDir)')" />
+            <TranslationFiles Include="$(TargetDir)/Translations/**/*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(LocalDir)" />
+        <Copy SourceFiles="@(TranslationFiles)" DestinationFiles="@(TranslationFiles->'$(LocalDir)/Translations/%(RecursiveDir)%(Filename)%(Extension)')" />
+        <Copy SourceFiles="@(OriginalWorkshop)" DestinationFolder="$(MSBuildProgramFiles32)/Steam/steamapps/workshop/content/255710/_$(PublishedFileID)/" Condition="Exists ('$(WorkshopDir)')" />
+        <RemoveDir Directories="$(WorkshopDir)" />
+    </Target>
+
+    <Target Name="DeployToWorkshop" AfterTargets="DeployToLocal" Condition="'$(Configuration)' == 'Workshop' AND '$(PublishedFileID)'!=''">
+        <Message Importance="high" Text="Copy to Workshop Directory" />
+        <ItemGroup>
+            <FilesToCopy Include="$(LocalDir)/*.*" />
+            <Previewimage Include="$(SolutionDir)\Workshop\previewimage.png" />
+        </ItemGroup>
+        <Delete Files="$(WorkshopDir)/*.*" />
+        <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(WorkshopDir)" />
+        <Copy SourceFiles="@(Previewimage)" DestinationFolder="$(WorkshopDir)" Condition="Exists('@(Previewimage)')" />
+        <RemoveDir Directories="$(LocalDir)" />
+    </Target>
+
+</Project>
