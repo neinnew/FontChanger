@@ -20,19 +20,73 @@ public static class FontChanger
     public static bool AdvancedFontFamily = false;
 
     public static Font? Font;
-    
-    
+
+    public static string[] Sizes =
+{
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30"
+        };
+    public static int GetSizeIndex(int Size)
+    {
+        var index = -1;
+        var sizeString = Size.ToString();
+        for (var i = 0; i < Sizes.Length; i++)
+            if (string.Compare(Sizes[i], sizeString, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                index = i;
+                break;
+            }
+        return index;
+    }
+    public static void SetSizeByIndex(int index, string type)
+    {
+        switch (type)
+        {
+            case "FontSizeForOpenSansRegular":
+                FontSizeForOpenSansRegular = int.Parse(Sizes[index]);
+                break;
+            case "FontSizeForOpenSansSemibold":
+                FontSizeForOpenSansSemibold = int.Parse(Sizes[index]);
+                break;
+            case "FontSizeForArchitectsDaughter":
+                FontSizeForArchitectsDaughter = int.Parse(Sizes[index]);
+                break;
+            default:
+                FontSize = int.Parse(Sizes[index]);
+                break;
+        }
+    }
     public static void Change()
     {
         // Creates a string array of font names.
         var fontNames = string.IsNullOrEmpty(FontFamily) ? null
             : FontFamily.Split(',').Select(name => name.Trim().Trim('"').Trim('\'')).ToArray();
+        var fontSize = FontSize;
         var fontNamesOpenSansRegular = string.IsNullOrEmpty(FontFamilyForOpenSansRegular) ? null
             : FontFamilyForOpenSansRegular.Split(',').Select(name => name.Trim().Trim('"').Trim('\'')).ToArray();
+        var fontOpenSansRegularSize = FontSizeForOpenSansRegular;
         var fontNamesOpenSansSemibold = string.IsNullOrEmpty(FontFamilyForOpenSansSemibold) ? null
             : FontFamilyForOpenSansSemibold.Split(',').Select(name => name.Trim().Trim('"').Trim('\'')).ToArray();
+        var fontOpenSansSemiboldSize = FontSizeForOpenSansSemibold;
         var fontNamesArchitectsDaughter = string.IsNullOrEmpty(FontFamilyForArchitectsDaughter) ? null 
             : FontFamilyForArchitectsDaughter.Split(',').Select(name => name.Trim().Trim('"').Trim('\'')).ToArray();
+        var fontArchitectsDaughterSize = FontSizeForArchitectsDaughter;
 
         // Applies to all text CO.UI.
         foreach (var component in UnityEngine.Object.FindObjectsOfType<UITextComponent>())
@@ -44,18 +98,22 @@ public static class FontChanger
                     case "OpenSans-Regular" :
                         if (fontNamesOpenSansRegular is null) continue;
                         component.font.baseFont.fontNames = fontNamesOpenSansRegular;
+                        component.font.size = fontOpenSansRegularSize;
                         break;
                     case "OpenSans-Semibold" :
                         if (fontNamesOpenSansSemibold is null) continue;
                         component.font.baseFont.fontNames = fontNamesOpenSansSemibold;
+                        component.font.size = fontOpenSansSemiboldSize;
                         break;
                     case "ArchitectsDaughter" :
                         if (fontNamesArchitectsDaughter is null) continue;
                         component.font.baseFont.fontNames = fontNamesArchitectsDaughter;
+                        component.font.size = fontArchitectsDaughterSize;
                         break;
                     default:
                         if (fontNames is null) continue;
                         component.font.baseFont.fontNames = fontNames;
+                        component.font.size = fontSize;
                         break;
                 }
             }
@@ -63,6 +121,7 @@ public static class FontChanger
             {
                 if (fontNames is null) continue;
                 component.font.baseFont.fontNames = fontNames;
+                component.font.size = fontSize;
             }
         }
 
