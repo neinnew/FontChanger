@@ -16,25 +16,16 @@ public class ModConfig
         public string? FontFamily { get => FontChanger.FontFamily; set => FontChanger.FontFamily = value ?? string.Empty; }
 
         [XmlElement("FontSize")]
-        public int? FontSize { get => FontChanger.FontSize; set => FontChanger.FontSize = value ?? 16; }
+        public int FontSize { get => FontChanger.FontSize; set => FontChanger.FontSize = value; }
 
         [XmlElement("FontFamilyForOpenSansRegular")]
         public string? FontFamilyForOpenSansRegular { get => FontChanger.FontFamilyForOpenSansRegular; set => FontChanger.FontFamilyForOpenSansRegular = value ?? string.Empty; }
-
-        [XmlElement("FontSizeForOpenSansRegular")]
-        public int? FontSizeForOpenSansRegular { get => FontChanger.FontSizeForOpenSansRegular; set => FontChanger.FontSizeForOpenSansRegular = value ?? 16; }
 
         [XmlElement("FontFamilyForOpenSansSemibold")]
         public string? FontFamilyForOpenSansSemibold { get => FontChanger.FontFamilyForOpenSansSemibold; set => FontChanger.FontFamilyForOpenSansSemibold = value ?? string.Empty; }
 
         [XmlElement("FontFamilyForArchitectsDaughter")]
-        public int? FontSizeForOpenSansSemibold { get => FontChanger.FontSizeForOpenSansSemibold; set => FontChanger.FontSizeForOpenSansSemibold = value ?? 16; }
-
-        [XmlElement("FontFamilyForArchitectsDaughter")]
         public string? FontFamilyForArchitectsDaughter { get => FontChanger.FontFamilyForArchitectsDaughter; set => FontChanger.FontFamilyForArchitectsDaughter = value ?? string.Empty; }
-
-        [XmlElement("FontSizeForArchitectsDaughter")]
-        public int? FontSizeForArchitectsDaughter { get => FontChanger.FontSizeForArchitectsDaughter; set => FontChanger.FontSizeForArchitectsDaughter = value ?? 16; }
 
         [XmlElement("ApplyOnImgui")]
         public bool ApplyOnImgui { get => FontChanger.ApplyOnImgui; set => FontChanger.ApplyOnImgui = value; }
